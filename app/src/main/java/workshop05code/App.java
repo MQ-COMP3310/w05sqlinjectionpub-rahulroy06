@@ -11,6 +11,8 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
+import org.checkerframework.checker.units.qual.g;
+
 /**
  *
  * @author sqlitetutorial.net
@@ -75,7 +77,16 @@ public class App {
 
             while (!guess.equals("q")) {
                 System.out.println("You've guessed '" + guess+"'.");
-
+                while (!guess.matches("^[a-z]{4}$")) {
+                    System.out.println("Invalid input! Please enter a 4-letter word in lowercase.");
+                    System.out.print("Enter a 4-letter word for a guess or 'q' to quit: ");
+                    guess = scanner.nextLine().trim();
+                    
+                    if (guess.equals("q")) { // Allow quitting even after an invalid attempt
+                        return;
+                    }
+                }
+    
                 if (wordleDatabaseConnection.isValidWord(guess)) { 
                     System.out.println("Success! It is in the the list.\n");
                 }else{

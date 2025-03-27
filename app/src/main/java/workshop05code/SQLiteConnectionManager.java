@@ -126,7 +126,10 @@ public class SQLiteConnectionManager {
      * @param word the word to store
      */
     public void addValidWord(int id, String word) {
-
+        if (!isValidInput(word)) {
+            System.out.println("Invalid input! Please enter a 4-letter word in lowercase.");
+            return;
+        }
         String sql = "INSERT INTO validWords(id,word) VALUES(?,?);";
 
         try (Connection conn = DriverManager.getConnection(databaseURL);
@@ -138,6 +141,16 @@ public class SQLiteConnectionManager {
             System.out.println(e.getMessage());
         }
 
+    }
+
+    /**
+     * Check if the input word is a 4-letter string that consists only of lowercase letters a-z
+     * 
+     * @param word the word to check
+     * @return true if the word is valid, false otherwise
+     */
+    private boolean isValidInput(String word) {
+        return word != null && word.length() == 4 && word.matches("^[a-z]+$");
     }
 
     /**
