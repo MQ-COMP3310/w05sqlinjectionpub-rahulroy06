@@ -18,19 +18,19 @@ import org.checkerframework.checker.units.qual.g;
  * @author sqlitetutorial.net
  */
 public class App {
-    // Start code for logging exercise
-    static {
-        // must set before the Logger
-        // loads logging.properties from the classpath
-        try {// resources\logging.properties
-            LogManager.getLogManager().readConfiguration(new FileInputStream("resources/logging.properties"));
-        } catch (SecurityException | IOException e1) {
-            e1.printStackTrace();
-        }
-    }
 
     private static final Logger logger = Logger.getLogger(App.class.getName());
     // End code for logging exercise
+    // Start code for logging exercise
+    static {
+        try {FileInputStream fis = new FileInputStream("resources/logging.properties");
+            LogManager.getLogManager().readConfiguration(new FileInputStream("resources/logging.properties"));
+        } catch (SecurityException | IOException e1) {
+            logger.log(Level.SEVERE, "Unable to load logging properties", e1);
+        }
+    }
+
+    
     
     /**
      * @param args the command line arguments
@@ -53,19 +53,23 @@ public class App {
         }
 
         // let's add some words to valid 4 letter words from the data.txt file
-
+        // Log valid words from file data.txt
         try (BufferedReader br = new BufferedReader(new FileReader("resources/data.txt"))) {
             String line;
             int i = 1;
             while ((line = br.readLine()) != null) {
-                System.out.println(line);
-                wordleDatabaseConnection.addValidWord(i, line);
+                if (wordleDatabaseConnection.isValidInput(line)) {
+                    logger.log(Level.INFO, "Valid word: " + line);
+                    wordleDatabaseConnection.addValidWord(i, line);
+                } else {
+                    logger.log(Level.SEVERE, "Invalid word from file: " + line);
+                }
                 i++;
             }
 
         } catch (IOException e) {
-            System.out.println("Not able to load . Sorry!");
-            System.out.println(e.getMessage());
+            logger.log(Level.WARNING, "Error reading data.txt", e);
+            System.out.println("Error reading data.txt");
             return;
         }
 
@@ -77,7 +81,9 @@ public class App {
 
             while (!guess.equals("q")) {
                 System.out.println("You've guessed '" + guess+"'.");
+                //log invalid guesses
                 while (!guess.matches("^[a-z]{4}$")) {
+                    logger.log(Level.INFO, "Invalid guess " + guess);
                     System.out.println("Invalid input! Please enter a 4-letter word in lowercase.");
                     System.out.print("Enter a 4-letter word for a guess or 'q' to quit: ");
                     guess = scanner.nextLine().trim();

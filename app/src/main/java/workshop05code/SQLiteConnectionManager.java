@@ -59,6 +59,7 @@ public class SQLiteConnectionManager {
      *
      * @param fileName the database file name
      */
+    // Log Exception
     public void createNewDatabase(String fileName) {
 
         try (Connection conn = DriverManager.getConnection(databaseURL)) {
@@ -69,7 +70,7 @@ public class SQLiteConnectionManager {
 
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Error creating database", e);
         }
     }
 
@@ -79,6 +80,7 @@ public class SQLiteConnectionManager {
      * @return true if the file exists in the correct location, false otherwise. If
      *         no url defined, also false.
      */
+    // Log Exception
     public boolean checkIfConnectionDefined() {
         if (databaseURL.equals("")) {
             return false;
@@ -88,7 +90,7 @@ public class SQLiteConnectionManager {
                     return true;
                 }
             } catch (SQLException e) {
-                System.out.println(e.getMessage());
+                logger.log(Level.SEVERE, "Error connecting to database", e);
                 return false;
             }
         }
@@ -100,6 +102,7 @@ public class SQLiteConnectionManager {
      *
      * @return true if the table structures have been created.
      */
+    // Log Exception
     public boolean createWordleTables() {
         if (databaseURL.equals("")) {
             return false;
@@ -113,7 +116,7 @@ public class SQLiteConnectionManager {
                 return true;
 
             } catch (SQLException e) {
-                System.out.println(e.getMessage());
+                logger.log(Level.SEVERE, "Error creating tables", e);
                 return false;
             }
         }
@@ -125,6 +128,7 @@ public class SQLiteConnectionManager {
      * @param id   the unique id for the word
      * @param word the word to store
      */
+    //  Log Exception
     public void addValidWord(int id, String word) {
         if (!isValidInput(word)) {
             System.out.println("Invalid input! Please enter a 4-letter word in lowercase.");
@@ -138,7 +142,7 @@ public class SQLiteConnectionManager {
             pstmt.setString(2, word);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Error adding word", e);
         }
 
     }
@@ -149,7 +153,7 @@ public class SQLiteConnectionManager {
      * @param word the word to check
      * @return true if the word is valid, false otherwise
      */
-    private boolean isValidInput(String word) {
+    protected boolean isValidInput(String word) {
         return word != null && word.length() == 4 && word.matches("^[a-z]+$");
     }
 
